@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:motilabs/screens/memo_screen.dart';
-import 'package:motilabs/models/memo_data.dart';
-
 
 class NoteItemWidget extends StatelessWidget {
   final List mainList;
@@ -22,7 +20,7 @@ class NoteItemWidget extends StatelessWidget {
             height: 50,
             // child: Text(mainList[index], textAlign: TextAlign.start,),
             child: TextButton(onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MemoScreen(noteTitle: NoteList[index],)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MemoScreen(noteTitle: mainList[index],)));
             }, child: Text(mainList[index], textAlign: TextAlign.start,),)
           ),
         );

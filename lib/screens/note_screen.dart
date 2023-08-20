@@ -28,7 +28,7 @@ class NoteScreen extends StatelessWidget {
         ],
       ),
       body: Container(
-        child: NoteItemWidget(mainList: NoteList,),
+        child: NoteItemWidget(mainList: memoData.firstWhere((data) => data.folder == folderTitle).note,),
 
       ),
     );

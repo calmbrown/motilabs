@@ -28,7 +28,7 @@ class FolderScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: FolderItemWiget(mainList: FolderList,),
+        body: FolderItemWiget(mainList: memoData.map((data) => data.folder).toList(),),
 
         bottomNavigationBar: Container(
           height: 70,
