@@ -8,7 +8,7 @@ class FolderScreen extends StatefulWidget {
 }
 
 class _FolderScreenState extends State<FolderScreen> {
-  // 메모 데이터의 상태를 저장하는 리스트
+  bool isEditMode = false; // 편집 모드인지 나타내는 상태 변수
   
   void _addNewFolder(String folderName) {
     setState(() {
@@ -32,12 +32,27 @@ class _FolderScreenState extends State<FolderScreen> {
           actions: [
             Row(
               children: [
-                TextButton(onPressed: (){}, child: Text("편집", style: TextStyle(color: Colors.black, fontSize: 15),)),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isEditMode = !isEditMode; // 편집 모드를 토글
+                    });
+                  },
+                  child: Text("편집", style: TextStyle(color: Colors.black, fontSize: 15)),
+                ),
               ],
             ),
           ],
         ),
-        body: FolderItemWiget(mainList: memoData.map((data) => data.folder).toList(),),
+        body: FolderItemWiget(
+          mainList: memoData.map((data) => data.folder).toList(),
+          onDelete: (index) {
+            setState(() {
+            memoData.removeAt(index); // 해당 폴더를 삭제
+            });
+          },
+          isEditMode: isEditMode,
+        ),
         bottomNavigationBar: Container(
           height: 70,
           padding: EdgeInsets.all(10),
