@@ -54,14 +54,17 @@ class _MemoScreenState extends State<MemoScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      TextField(
-                        controller: _controller,
-                        maxLines: 10,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: snapshot.data!.content == null
-                              ? '메모를 입력하세요'
-                              : null,
+                      Flexible(
+                        flex: 7,
+                        child: TextField(
+                          controller: _controller,
+                          maxLines: 40,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: snapshot.data!.content == null
+                                ? '메모를 입력하세요'
+                                : null,
+                          ),
                         ),
                       ),
                       SizedBox(height: 10),
@@ -76,7 +79,8 @@ class _MemoScreenState extends State<MemoScreen> {
                         child: Text('저장'),
                       ),
                       SizedBox(height: 10),
-                      Expanded(
+                      Flexible(
+                        flex: 1,
                         child: SingleChildScrollView(
                           child: Text(
                             _note,
