@@ -26,7 +26,13 @@ class _MemoScreenState extends State<MemoScreen> {
         appBar: AppBar(
           toolbarHeight: 40,
           centerTitle: true,
-          // backgroundColor: Colors.white,
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.pop(context, 'updated');
+            },
+          ),
           title: FutureBuilder<Note>(
             future: memo, // your Future function here
             builder: (BuildContext context, AsyncSnapshot<Note> snapshot) {
@@ -37,8 +43,7 @@ class _MemoScreenState extends State<MemoScreen> {
               } else if (!snapshot.hasData) {
                 return Text('No Data');
               } else {
-                return Text(
-                    snapshot.data!.title); // Ensure data exists before access
+                return Text(snapshot.data!.title, style: TextStyle(color: Colors.black),); // Ensure data exists before access
               }
             },
           ),

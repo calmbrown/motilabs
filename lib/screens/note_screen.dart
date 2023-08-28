@@ -28,8 +28,13 @@ class _NoteScreenState extends State<NoteScreen> {
         toolbarHeight: 40,
         centerTitle: true,
         backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context, 'updated');
+          },
+        ),
         title: Container(
-          color: Colors.white,
           child: Text(
             widget.folder['name'],
             style: TextStyle(color: Colors.black, fontSize: 15),
