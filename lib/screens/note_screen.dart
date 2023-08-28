@@ -1,40 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:motilabs/repositories/dbhelper.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:motilabs/db.dart';
 import 'package:motilabs/widgets/note_item_widget.dart';
 // import 'package:motilabs/repositories/dbhelper.dart';
 
 class NoteScreen extends StatefulWidget {
-  final String folderTitle;
-  final int folderId;
+  final Map folder;
 
-  const NoteScreen({Key? key, required this.folderTitle, required this.folderId}) : super(key: key);
+  const NoteScreen(
+      {Key? key, required this.folder})
+      : super(key: key);
 
   @override
   State<NoteScreen> createState() => _NoteScreenState();
 }
 
 class _NoteScreenState extends State<NoteScreen> {
-  Database? db;
   bool isEditMode = false; // 편집 모드인지 나타내는 상태 변수
 
   Future<List<dynamic>> get notes async {
-    final db = await DBHelper().database;
-    print("testtsafsfasdfasdfasd");
-    print(widget.folderId);
-    print("testtsafsfasdfasdfasd");
-    final List<Map<dynamic, dynamic>> noteList = await db.query('notes', where: 'folder_id = ?', whereArgs: [widget.folderId]);
-    // final List<Map<dynamic, dynamic>> noteList = await db.query('notes');
-
-    return List.generate(noteList.length, (i) {
-      if (noteList[i]['title'] == null) {
-        updateNote(
-          noteList[i]['id'], "제목 없음"
-        );
-      }
-      return noteList[i];
-    });
+    return await readNote(widget.folder['id']);
   }
 
   @override
@@ -47,7 +31,7 @@ class _NoteScreenState extends State<NoteScreen> {
         title: Container(
           color: Colors.white,
           child: Text(
-            widget.folderTitle,
+            widget.folder['name'],
             style: TextStyle(color: Colors.black, fontSize: 15),
           ),
         ),
@@ -63,8 +47,7 @@ class _NoteScreenState extends State<NoteScreen> {
                   child: Text(
                     "편집",
                     style: TextStyle(color: Colors.black, fontSize: 15),
-                  )
-                  ),
+                  )),
             ],
           ),
         ],
@@ -106,7 +89,7 @@ class _NoteScreenState extends State<NoteScreen> {
 
                   if (newNoteName != null && newNoteName.isNotEmpty) {
                     setState(() {
-                      insertNote(widget.folderId,newNoteName);
+                      createNote(widget.folder['id'], newNoteName);
                     });
                   }
                 },

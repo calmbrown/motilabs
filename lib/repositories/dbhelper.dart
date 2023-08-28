@@ -23,11 +23,8 @@ class DBHelper {
       await db.execute('''
         CREATE TABLE folders (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT
+          name TEXT default '제목 없음'
         );
-      ''');
-      await db.execute('''
-        DROP TABLE IF EXISTS notes;
       ''');
       await db.execute('''
         CREATE TABLE notes (
@@ -37,9 +34,6 @@ class DBHelper {
           content TEXT,
           FOREIGN KEY(folder_id) REFERENCES folders(id)
         );
-      ''');
-      await db.execute('''
-        INSERT INTO folders (name) VALUES ('Default');
       ''');
     }, version: 1);
     return database;

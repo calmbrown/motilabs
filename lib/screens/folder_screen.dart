@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motilabs/db.dart';
 import 'package:motilabs/widgets/folder_item_widget.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:motilabs/repositories/dbhelper.dart';
 
 class FolderScreen extends StatefulWidget {
   @override
@@ -10,16 +8,10 @@ class FolderScreen extends StatefulWidget {
 }
 
 class _FolderScreenState extends State<FolderScreen> {
-  Database? db;
   bool isEditMode = false; // 편집 모드인지 나타내는 상태 변수
 
   Future<List<dynamic>> get folders async {
-    final db = await DBHelper().database;
-    final List<Map<dynamic, dynamic>> folderList = await db.query('folders');
-
-    return List.generate(folderList.length, (i) {
-      return folderList[i];
-    });
+    return await readFolders();
   }
 
   @override
@@ -47,10 +39,8 @@ class _FolderScreenState extends State<FolderScreen> {
                     isEditMode = !isEditMode; // 편집 모드를 토글
                   });
                 },
-                child: Text(
-                  "편집",
-                  style: TextStyle(color: Colors.black, fontSize: 15)
-                ),
+                child: Text("편집",
+                    style: TextStyle(color: Colors.black, fontSize: 15)),
               ),
             ],
           ),
@@ -66,10 +56,6 @@ class _FolderScreenState extends State<FolderScreen> {
           if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}'); // 에러 처리
           }
-          
-
-          print("여기여기");
-          print(snapshot.data!);
 
           return FolderItemWiget(
             mainList: snapshot.data!,
@@ -100,7 +86,7 @@ class _FolderScreenState extends State<FolderScreen> {
 
                   if (newFolderName != null && newFolderName.isNotEmpty) {
                     setState(() {
-                      insertFolder(newFolderName);
+                      createFolder(newFolderName);
                     });
                   }
                 },

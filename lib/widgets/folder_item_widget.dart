@@ -46,8 +46,7 @@ class FolderItemWiget extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => NoteScreen(
-                          folderTitle: mainList[index]['name'],
-                          folderId: mainList[index]['id'],
+                          folder: mainList[index],
                         )));
           },
         );

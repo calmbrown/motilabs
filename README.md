@@ -79,3 +79,21 @@ flutter build ios
 
 # flutter 개발 vscode extention
 https://getechnews.com/visual-studio-code-extensions-to-improve-your-flutter-app-development-a9b18fae2c6e
+
+# Future 에 대해서
+
+# 앱 출시하기
+https://velog.io/@minji0801/%EC%95%B1%EC%8A%A4%ED%86%A0%EC%96%B4%EC%97%90-%EC%95%B1-%EB%93%B1%EB%A1%9D%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95%EC%9D%84-%EB%AA%A8%EB%A5%B4%EA%B2%A0%EB%8B%A4
+
+# SQLite 겨우 적용했다
+애초에 DB 넣지 않고 설계를 해서 상태 저장 여부와 Future를 통해서 
+비동기 식의 데이터를 어떻게 처리하고 불러와야하는지를 몰라서 많이 해맸다.
+
+# TO-BE 0828
+- 오른쪽 하단 팬 버튼을 눌러 메모 바로 작성하게 디자인
+- 상단에 좌우 슬라이드 메모 패널 어떻게 삽입할지 > 메모지마다 중요표시 버튼으로 토글된것 상단 슬라이스되게
+- 전체적인 디자인, 톤, dark mode
+- AOS도 출시..?
+- Memoscreen > title 일체화, 메모 스크린에서 바로 타이틀 수정 가능하게끔, 맨 상단을 타이틀로 ( 이건 db 수정 필요하겠네 )
+- 이미지 삽입(붙여넣기도 되나..?)
+- 검색 ( 제목, 컨텐츠 동시에 ) > 혹시 DB 형태를 바꿔야하나?
