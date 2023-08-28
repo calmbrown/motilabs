@@ -71,7 +71,9 @@ class _NoteScreenState extends State<NoteScreen> {
           return NoteItemWidget(
             mainList: snapshot.data!,
             onDelete: (index) {
-              deleteFolder(snapshot.data![index]['id']);
+              setState(() {
+                deleteNote(snapshot.data![index]['id']);
+              });
             },
             isEditMode: isEditMode,
           );

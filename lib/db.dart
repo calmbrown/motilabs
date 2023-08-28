@@ -55,6 +55,12 @@ Future<void> updateNote(int id, String title) async {
   await db.update('notes', {'title': title}, where: 'id = ?', whereArgs: [id]);
 }
 
+Future<void> deleteNote(int id) async {
+  final db = await DBHelper().database;
+
+  await db.delete('notes', where: 'id = ?', whereArgs: [id]);
+}
+
 Future<void> createMemo(int id, String title) async {
   final db = await DBHelper().database;
 
@@ -81,8 +87,3 @@ Future<void> updateMemo(int id, String content) async {
       where: 'id = ?', whereArgs: [id]);
 }
 
-Future<void> deleteNote(int id) async {
-  final db = await DBHelper().database;
-
-  await db.delete('notes', where: 'id = ?', whereArgs: [id]);
-}
