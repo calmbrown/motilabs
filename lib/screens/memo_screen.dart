@@ -81,18 +81,18 @@ class _MemoScreenState extends State<MemoScreen> {
                             Navigator.pop(context, 'updated');
                           });
                         },
+                        
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          elevation: 5, // 버튼의 그림자 높이
+                          shape: RoundedRectangleBorder( // 버튼의 모양
+                            borderRadius: BorderRadius.circular(10), // 모서리 둥글기
+                          ),
+                        ),
                         child: Text('저장'),
                       ),
                       SizedBox(height: 10),
-                      Flexible(
-                        flex: 1,
-                        child: SingleChildScrollView(
-                          child: Text(
-                            _note,
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 );
