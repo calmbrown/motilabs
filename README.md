@@ -50,4 +50,32 @@ https://www.youtube.com/watch?v=Y1Q4-GxIUHc&list=PLfLgtT94nNq1izG4R2WDN517iPX4WX
 - 위젯 크기 설정 가능한데, 비율도 가능하고 Extension으로 나머지 공간 최대화 할 수도 있다.
 - 위젯 감싸기 ( 왼쪽 전구표시 눌러서 자동 감싸기도 가능 )
 
+# 기본 메모기능 구현
+폴더 리스팅
+메모 추가
+메모 노트 페이지
+리스트, 맵 데이터 구조
 
+# SQLite 적용한 DB
+폴더 까지는 진행함, 다만 자동 리로드가 안됨, 이거 참고해도 될듯
+자동 리로드 setState()로 감싸서 해결함
+setState(() {
+    insertFolder(newFolderName);
+});
+https://luvris2.tistory.com/706
+
+delete가 좀 이상한듯..? (index를 정확히 불러오지 못하는거같)
+
+# cocoapods 설치
+sudo gem install activesupport -v 6.1.7.6
+sudo gem instasll cocoapods
+
+# Android sdk 설치
+Android studio > SDK Manager > SDK Tools > ANdroid SKD Commandline Tools 체크 > 설치
+flutter docter
+
+# xcode에서 라이브러리 못찾을때
+flutter build ios
+
+# flutter 개발 vscode extention
+https://getechnews.com/visual-studio-code-extensions-to-improve-your-flutter-app-development-a9b18fae2c6e

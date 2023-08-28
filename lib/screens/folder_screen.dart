@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:motilabs/models/memo_data.dart';
+import 'package:motilabs/db.dart';
 import 'package:motilabs/widgets/folder_item_widget.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:motilabs/repositories/dbhelper.dart';
 
 class FolderScreen extends StatefulWidget {
   @override
@@ -8,87 +10,111 @@ class FolderScreen extends StatefulWidget {
 }
 
 class _FolderScreenState extends State<FolderScreen> {
+  Database? db;
   bool isEditMode = false; // 편집 모드인지 나타내는 상태 변수
-  
-  void _addNewFolder(String folderName) {
-    setState(() {
-      memoData.add(MemoData(folder: folderName, note: []));
+
+  Future<List<dynamic>> get folders async {
+    final db = await DBHelper().database;
+    final List<Map<dynamic, dynamic>> folderList = await db.query('folders');
+
+    return List.generate(folderList.length, (i) {
+      return folderList[i];
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
+        home: Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        toolbarHeight: 40,
+        centerTitle: true,
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          toolbarHeight: 40,
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          title: Container(
-            color: Colors.white,
-            child: Text('폴더', style: TextStyle(color: Colors.black, fontSize: 15),),
+        title: Container(
+          color: Colors.white,
+          child: Text(
+            '폴더',
+            style: TextStyle(color: Colors.black, fontSize: 15),
           ),
-          actions: [
-            Row(
-              children: [
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      isEditMode = !isEditMode; // 편집 모드를 토글
-                    });
-                  },
-                  child: Text("편집", style: TextStyle(color: Colors.black, fontSize: 15)),
-                ),
-              ],
-            ),
-          ],
         ),
-        body: FolderItemWiget(
-          mainList: memoData.map((data) => data.folder).toList(),
-          onDelete: (index) {
-            setState(() {
-            memoData.removeAt(index); // 해당 폴더를 삭제
-            });
-          },
-          isEditMode: isEditMode,
-        ),
-        bottomNavigationBar: Container(
-          height: 70,
-          padding: EdgeInsets.all(10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        actions: [
+          Row(
             children: [
-                // IconButton(
-                //   onPressed: () {
-                //     // 새 폴더를 추가하는 로직
-                //     setState(() {
-                //       memoData.add(MemoData(folder: "NewFolder", note: []));
-                //     });
-                //   },
-                //   icon: Icon(Icons.create_new_folder)
-                // ),
-                IconButton(
-                  onPressed: () async {
-                    final newFolderName = await showDialog<String>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return _NewFolderDialog();
-                      },
-                    );
-
-                    if (newFolderName != null && newFolderName.isNotEmpty) {
-                      _addNewFolder(newFolderName);
-                    }
-                  },
-                  icon: Icon(Icons.create_new_folder)
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    isEditMode = !isEditMode; // 편집 모드를 토글
+                  });
+                },
+                child: Text(
+                  "편집",
+                  style: TextStyle(color: Colors.black, fontSize: 15)
                 ),
-                IconButton(onPressed: (){}, icon: Icon(Icons.edit, color: Colors.black,))
+              ),
             ],
           ),
+        ],
+      ),
+      body: FutureBuilder<List<dynamic>>(
+        future: folders,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(); // 로딩 중 표시
+          }
+
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}'); // 에러 처리
+          }
+          
+
+          print("여기여기");
+          print(snapshot.data!);
+
+          return FolderItemWiget(
+            mainList: snapshot.data!,
+            onDelete: (index) {
+              setState(() {
+                deleteFolder(snapshot.data![index]['id']);
+              });
+              // deleteFolder(index);
+            },
+            isEditMode: isEditMode,
+          );
+        },
+      ),
+      bottomNavigationBar: Container(
+        height: 70,
+        padding: EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+                onPressed: () async {
+                  final newFolderName = await showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return _NewFolderDialog();
+                    },
+                  );
+
+                  if (newFolderName != null && newFolderName.isNotEmpty) {
+                    setState(() {
+                      insertFolder(newFolderName);
+                    });
+                  }
+                },
+                icon: Icon(Icons.create_new_folder)),
+            IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.edit,
+                  color: Colors.black,
+                ))
+          ],
         ),
-      )
-    );
+      ),
+    ));
   }
 }
 
