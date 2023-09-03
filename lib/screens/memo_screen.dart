@@ -30,6 +30,11 @@ class _MemoScreenState extends State<MemoScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
+              setState(() {
+                _note = _controller.text;
+                updateMemo(widget.memo_id, _note);
+                // Navigator.pop(context, 'updated');
+              });
               Navigator.pop(context, 'updated');
             },
           ),
@@ -47,6 +52,24 @@ class _MemoScreenState extends State<MemoScreen> {
               }
             },
           ),
+          actions: [
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _note = _controller.text;
+                      updateMemo(widget.memo_id, _note);
+                      // Navigator.pop(context, 'updated');
+                    });
+                    FocusScope.of(context).unfocus(); 
+                  },
+                  // child: Text("완료", style: TextStyle(color: Colors.black, fontSize: 15)),
+                  child: Icon(Icons.check, color: Colors.black),
+                ),
+              ],
+            ),
+          ],
         ),
         body: FutureBuilder<Note>(
             builder: (context, snapshot) {
@@ -61,38 +84,56 @@ class _MemoScreenState extends State<MemoScreen> {
                     children: [
                       Flexible(
                         flex: 7,
-                        child: TextField(
-                          controller: _controller,
-                          maxLines: 40,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: snapshot.data!.content == null
-                                ? '메모를 입력하세요'
-                                : null,
-                          ),
+                        child: Stack(
+                          children: [
+                            TextField(
+                              controller: _controller,
+                              maxLines: 40,
+                              decoration: InputDecoration(
+                                // border: OutlineInputBorder(),
+                                border: InputBorder.none,
+                                hintText: snapshot.data!.content == null
+                                    ? '메모를 입력하세요'
+                                    : null,
+                              ),
+                            ),
+                            Positioned(
+                              right: 5,  // 오른쪽에서 10 픽셀 떨어진 곳에 배치
+                              bottom: 5,  // 아래쪽에서 10 픽셀 떨어진 곳에 배치
+                              child: GestureDetector(
+                                onDoubleTap: () {
+                                  setState(() {
+                                    _note = _controller.text;
+                                    updateMemo(widget.memo_id, _note);
+                                    Navigator.pop(context, 'updated');
+                                  });
+                                  FocusScope.of(context).unfocus(); 
+                                },
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _note = _controller.text;
+                                      updateMemo(widget.memo_id, _note);
+                                      // Navigator.pop(context, 'updated');
+                                    });
+                                    FocusScope.of(context).unfocus(); 
+                                  },
+                                  
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.black.withOpacity(0.4),
+                                    foregroundColor: Colors.white,
+                                    elevation: 5, // 버튼의 그림자 높이
+                                    shape: RoundedRectangleBorder( // 버튼의 모양
+                                      borderRadius: BorderRadius.circular(20), // 모서리 둥글기
+                                    ),
+                                  ),
+                                  child: Text('완료'),
+                                ),
+                              ),
+                            ),
+                          ]
                         ),
                       ),
-                      SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _note = _controller.text;
-                            updateMemo(widget.memo_id, _note);
-                            Navigator.pop(context, 'updated');
-                          });
-                        },
-                        
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          elevation: 5, // 버튼의 그림자 높이
-                          shape: RoundedRectangleBorder( // 버튼의 모양
-                            borderRadius: BorderRadius.circular(10), // 모서리 둥글기
-                          ),
-                        ),
-                        child: Text('저장'),
-                      ),
-                      SizedBox(height: 10),
                     ],
                   ),
                 );
