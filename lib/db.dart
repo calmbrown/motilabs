@@ -1,6 +1,7 @@
 import 'package:motilabs/repositories/dbhelper.dart';
 import 'package:motilabs/models/memo_data.dart';
-
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 Future<void> createFolder(String name) async {
   final db = await DBHelper().database;
 
@@ -9,11 +10,23 @@ Future<void> createFolder(String name) async {
 
 Future<List<dynamic>> readFolders() async {
   final db = await DBHelper().database;
+  var databasesPath = await getDatabasesPath();
+  String path = join(databasesPath, 'my_database.db');
+  print("Database path: $path");  // 로그로 경로 출력
+
   final List<Map<dynamic, dynamic>> folderList = await db.query('folders');
 
   return List.generate(folderList.length, (i) {
     return folderList[i];
   });
+}
+
+Future<List<dynamic>> readListFolders() async {
+  final db = await DBHelper().database;
+
+  final List<Map<dynamic, dynamic>> folderList = await db.query('folders');
+  
+  return folderList;
 }
 
 Future<void> updateFolder(String name) async {
@@ -61,10 +74,9 @@ Future<void> deleteNote(int id) async {
   await db.delete('notes', where: 'id = ?', whereArgs: [id]);
 }
 
-Future<void> createMemo(int id, String title) async {
+Future<int> createMemo(int id, String title) async {
   final db = await DBHelper().database;
-
-  await db.insert('notes', {'title': title, 'folder_id': id});
+  return await db.insert('notes', {'title': title, 'folder_id': id});
 }
 
 Future<Note> readMemo(int id) async {

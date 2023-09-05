@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:motilabs/db.dart';
 import 'package:motilabs/widgets/folder_item_widget.dart';
+import 'package:motilabs/screens/memo_screen.dart';
 
 class FolderScreen extends StatefulWidget {
-  @override
+  @override 
   _FolderScreenState createState() => _FolderScreenState();
 }
 
@@ -39,8 +40,7 @@ class _FolderScreenState extends State<FolderScreen> {
                     isEditMode = !isEditMode; // 편집 모드를 토글
                   });
                 },
-                child: Text("편집",
-                    style: TextStyle(color: Colors.black, fontSize: 15)),
+                child: Text("편집", style: TextStyle(color: Colors.black, fontSize: 15)),
               ),
             ],
           ),
@@ -63,7 +63,6 @@ class _FolderScreenState extends State<FolderScreen> {
               setState(() {
                 deleteFolder(snapshot.data![index]['id']);
               });
-              // deleteFolder(index);
             },
             isEditMode: isEditMode,
           );
@@ -92,7 +91,35 @@ class _FolderScreenState extends State<FolderScreen> {
                 },
                 icon: Icon(Icons.create_new_folder)),
             IconButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final result = await showDialog<Map<String, dynamic>>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return _NewNoteDialog();
+                    },
+                  );
+
+                  if (result != null &&
+                      result['noteName'].isNotEmpty &&
+                      result['folderId'] != null) {
+                    try {
+                      int createdMemoId = await createMemo(
+                          result['folderId'], result['noteName']);
+                      setState(() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                MemoScreen(memo_id: createdMemoId),
+                          ),
+                        );
+                      });
+                    } catch (e) {
+                      // 예외 처리
+                      print('Error creating memo: $e');
+                    }
+                  }
+                },
                 icon: Icon(
                   Icons.edit,
                   color: Colors.black,
@@ -126,6 +153,70 @@ class _NewFolderDialog extends StatelessWidget {
           child: Text('추가'),
           onPressed: () {
             Navigator.of(context).pop(_controller.text);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _NewNoteDialog extends StatefulWidget {
+  @override
+  _NewNoteDialogState createState() => _NewNoteDialogState();
+}
+
+class _NewNoteDialogState extends State<_NewNoteDialog> {
+  final TextEditingController _controller = TextEditingController();
+  Map<dynamic, dynamic>? selectedFolder;
+  
+  Future<List<dynamic>> get folders async {
+    return await readFolders();
+  }
+  
+  @override
+  void initState() {
+    super.initState();
+    _initializeSelectedFolder();
+  }
+
+  void _initializeSelectedFolder() async {
+    List<dynamic> folderList = await folders;
+    if (folderList.isNotEmpty) {
+      selectedFolder = folderList.first;
+    }
+  }
+
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('새 노트 이름'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _controller,
+            decoration: InputDecoration(hintText: "노트 이름을 입력하세요"),
+          ),
+          SizedBox(height: 20),
+          
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: Text('취소'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          child: Text('추가'),
+          onPressed: () {
+            Navigator.of(context).pop({
+              'noteName': _controller.text,
+              'folderId': selectedFolder?['id'],
+            });
           },
         ),
       ],

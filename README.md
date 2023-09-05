@@ -89,6 +89,16 @@ https://velog.io/@minji0801/%EC%95%B1%EC%8A%A4%ED%86%A0%EC%96%B4%EC%97%90-%EC%95
 애초에 DB 넣지 않고 설계를 해서 상태 저장 여부와 Future를 통해서 
 비동기 식의 데이터를 어떻게 처리하고 불러와야하는지를 몰라서 많이 해맸다.
 
+# 와 vscode에서 SQLite 볼 수 있는 방법
+var databasesPath = await getDatabasesPath();
+String path = join(databasesPath, 'my_database.db');
+print("Database path: $path");  // 로그로 경로 출력
+
+위 출력된 경로 
+Sqlite 플러그인 깔고 Cmd + Shift + p > SQLite: Open Database > 경로로 검색
+Finder에서 Cmd + Shift + G 하면 로그에 나온 폴더 경로로 접근 가능
+경로 예시 : /Users/taemin/Library/Containers/com.example.motilabs/Data/Documents/memos.db
+
 # TO-BE 0828
 - 오른쪽 하단 팬 버튼을 눌러 메모 바로 작성하게 디자인
 - 상단에 좌우 슬라이드 메모 패널 어떻게 삽입할지 > 메모지마다 중요표시 버튼으로 토글된것 상단 슬라이스되게

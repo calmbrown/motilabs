@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:motilabs/db.dart';
 import 'package:motilabs/widgets/note_item_widget.dart';
-// import 'package:motilabs/repositories/dbhelper.dart';
+import 'package:motilabs/screens/memo_screen.dart';
 
 class NoteScreen extends StatefulWidget {
   final Map folder;
 
-  const NoteScreen(
-      {Key? key, required this.folder})
-      : super(key: key);
+  const NoteScreen({Key? key, required this.folder}) : super(key: key);
 
   @override
   State<NoteScreen> createState() => _NoteScreenState();
@@ -105,7 +103,33 @@ class _NoteScreenState extends State<NoteScreen> {
                   color: Colors.black,
                 )),
             IconButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final newNoteName = await showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return _NewNoteDialog();
+                    },
+                  );
+
+                  if (newNoteName != null && newNoteName.isNotEmpty) {
+                    try {
+                      int createdMemoId =
+                          await createMemo(widget.folder['id'], newNoteName);
+                      setState(() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                MemoScreen(memo_id: createdMemoId),
+                          ),
+                        );
+                      });
+                    } catch (e) {
+                      // 예외 처리
+                      print('Error creating memo: $e');
+                    }
+                  }
+                },
                 icon: Icon(
                   Icons.edit,
                   color: Colors.black,
