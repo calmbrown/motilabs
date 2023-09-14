@@ -25,21 +25,25 @@ class FolderItemWiget extends StatelessWidget {
               alignment: Alignment.centerLeft,
               height: 50,
               child: Text(
-                  mainList[index]['name'],
-                  textAlign: TextAlign.start,
+                mainList[index]['name'],
+                textAlign: TextAlign.start,
               )),
           trailing: isEditMode // 편집 모드일 경우에만 삭제 버튼 표시
               ? SizedBox(
-                width: 100,
-                height: 100,
-                child: TextButton(
+                  width: 100,
+                  height: 100,
+                  // child: TextButton(
+                  //     onPressed: () => onDelete(index),
+                  //     child: Text(
+                  //       'Delete',
+                  //       style: TextStyle(color: Colors.red),
+                  //     ),
+                  //   ),
+                  child: IconButton(
+                    icon: Icon(Icons.edit_note_outlined),
+                    color: Colors.red,
                     onPressed: () => onDelete(index),
-                    child: Text(
-                      'Delete',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-              )
+                  ))
               : null,
           onTap: () {
             Navigator.push(

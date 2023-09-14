@@ -2,6 +2,7 @@ import 'package:motilabs/repositories/dbhelper.dart';
 import 'package:motilabs/models/memo_data.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+
 Future<void> createFolder(String name) async {
   final db = await DBHelper().database;
 
@@ -12,7 +13,7 @@ Future<List<dynamic>> readFolders() async {
   final db = await DBHelper().database;
   var databasesPath = await getDatabasesPath();
   String path = join(databasesPath, 'my_database.db');
-  print("Database path: $path");  // 로그로 경로 출력
+  print("Database path: $path"); // 로그로 경로 출력
 
   final List<Map<dynamic, dynamic>> folderList = await db.query('folders');
 
@@ -25,15 +26,14 @@ Future<List<dynamic>> readListFolders() async {
   final db = await DBHelper().database;
 
   final List<Map<dynamic, dynamic>> folderList = await db.query('folders');
-  
+
   return folderList;
 }
 
-Future<void> updateFolder(String name) async {
+Future<void> updateFolder(String name, int id) async {
   final db = await DBHelper().database;
 
-  await db.update('folders', {'name': name},
-      where: 'id = ?', whereArgs: [name]);
+  await db.update('folders', {'name': name}, where: 'id = ?', whereArgs: [id]);
 }
 
 Future<void> deleteFolder(int id) async {
@@ -98,4 +98,3 @@ Future<void> updateMemo(int id, String content) async {
   await db.update('notes', {'content': content},
       where: 'id = ?', whereArgs: [id]);
 }
-

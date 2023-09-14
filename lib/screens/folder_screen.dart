@@ -4,7 +4,7 @@ import 'package:motilabs/widgets/folder_item_widget.dart';
 import 'package:motilabs/screens/memo_screen.dart';
 
 class FolderScreen extends StatefulWidget {
-  @override 
+  @override
   _FolderScreenState createState() => _FolderScreenState();
 }
 
@@ -13,6 +13,18 @@ class _FolderScreenState extends State<FolderScreen> {
 
   Future<List<dynamic>> get folders async {
     return await readFolders();
+  }
+
+  void updateFolderName(name, id) {
+    setState(() {
+      updateFolder(name, id);
+    });
+  }
+
+  void deleteFolderName(id) {
+    setState(() {
+      deleteFolder(id);
+    });
   }
 
   @override
@@ -40,7 +52,8 @@ class _FolderScreenState extends State<FolderScreen> {
                     isEditMode = !isEditMode; // 편집 모드를 토글
                   });
                 },
-                child: Text("편집", style: TextStyle(color: Colors.black, fontSize: 15)),
+                child: Text("편집",
+                    style: TextStyle(color: Colors.black, fontSize: 15)),
               ),
             ],
           ),
@@ -59,10 +72,26 @@ class _FolderScreenState extends State<FolderScreen> {
 
           return FolderItemWiget(
             mainList: snapshot.data!,
-            onDelete: (index) {
-              setState(() {
-                deleteFolder(snapshot.data![index]['id']);
-              });
+            onDelete: (index) async {
+              // setState(() {
+              //   deleteFolder(snapshot.data![index]['id']);
+              // });
+              final newFolderName = await showDialog<String>(
+                context: context,
+                builder: (BuildContext context) {
+                  return _EditDialog(
+                    snapshot.data![index],
+                    updateFolderName,
+                    deleteFolderName,
+                  );
+                },
+              );
+
+              if (newFolderName != null && newFolderName.isNotEmpty) {
+                setState(() {
+                  deleteFolder(snapshot.data![index]['id']);
+                });
+              }
             },
             isEditMode: isEditMode,
           );
@@ -168,11 +197,11 @@ class _NewNoteDialog extends StatefulWidget {
 class _NewNoteDialogState extends State<_NewNoteDialog> {
   final TextEditingController _controller = TextEditingController();
   Map<dynamic, dynamic>? selectedFolder;
-  
+
   Future<List<dynamic>> get folders async {
     return await readFolders();
   }
-  
+
   @override
   void initState() {
     super.initState();
@@ -186,8 +215,6 @@ class _NewNoteDialogState extends State<_NewNoteDialog> {
     }
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -200,7 +227,6 @@ class _NewNoteDialogState extends State<_NewNoteDialog> {
             decoration: InputDecoration(hintText: "노트 이름을 입력하세요"),
           ),
           SizedBox(height: 20),
-          
         ],
       ),
       actions: <Widget>[
@@ -220,6 +246,68 @@ class _NewNoteDialogState extends State<_NewNoteDialog> {
           },
         ),
       ],
+    );
+  }
+}
+
+class _EditDialog extends StatefulWidget {
+  final Map<dynamic, dynamic> folder;
+  final Function(String, int) updateFolderName;
+  final Function(int) deleteFolderName;
+
+  const _EditDialog(this.folder, this.updateFolderName, this.deleteFolderName);
+
+  @override
+  _EditDialogState createState() => _EditDialogState();
+}
+
+class _EditDialogState extends State<_EditDialog> {
+  TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.folder['name']);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      // title: Text('편집'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: _controller,
+                decoration: InputDecoration(hintText: widget.folder['name']),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // Edit action here
+                  print("Edit clicked");
+                  widget.updateFolderName(
+                      _controller.text, widget.folder['id']);
+                  Navigator.of(context).pop();
+                },
+                child: Text('수정'),
+              ),
+              SizedBox(height: 10), // Add some space between the buttons
+              ElevatedButton(
+                onPressed: () {
+                  // Delete action here
+                  print("Delete clicked");
+                  widget.deleteFolderName(widget.folder['id']);
+                  Navigator.of(context).pop();
+                },
+                child: Text('삭제'),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

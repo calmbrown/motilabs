@@ -38,14 +38,11 @@ class _NoteItemWidgetState extends State<NoteItemWidget> {
               ? SizedBox(
                   width: 100,
                   height: 100,
-                  child: TextButton(
+                  child: IconButton(
+                    icon: Icon(Icons.edit_note_outlined),
+                    color: Colors.red,
                     onPressed: () => widget.onDelete(index),
-                    child: Text(
-                      'Delete',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                )
+                  ))
               : null,
           onTap: () {
             final result = Navigator.push(

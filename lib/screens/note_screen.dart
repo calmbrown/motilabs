@@ -19,6 +19,18 @@ class _NoteScreenState extends State<NoteScreen> {
     return await readNote(widget.folder['id']);
   }
 
+  void updateNoteName(id, title) {
+    setState(() {
+      updateNote(id, title);
+    });
+  }
+
+  void deleteNoteName(id) {
+    setState(() {
+      deleteNote(id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,10 +80,20 @@ class _NoteScreenState extends State<NoteScreen> {
 
           return NoteItemWidget(
             mainList: snapshot.data!,
-            onDelete: (index) {
-              setState(() {
-                deleteNote(snapshot.data![index]['id']);
-              });
+            onDelete: (index) async {
+              final newNoteName = await showDialog<String>(
+                context: context,
+                builder: (BuildContext context) {
+                  return _EditDialog(
+                    snapshot.data![index], updateNoteName, deleteNoteName,
+                  );
+                },
+              );
+              if (newNoteName != null && newNoteName.isNotEmpty) {
+                setState(() {
+                  deleteNote(snapshot.data![index]['id']);
+                });
+              }
             },
             isEditMode: isEditMode,
           );
@@ -166,6 +188,70 @@ class _NewNoteDialog extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+
+class _EditDialog extends StatefulWidget {
+  final Map<dynamic, dynamic> note;  
+  final Function(int, String) updateNoteName;
+  final Function(int) deleteNoteName;
+
+  const _EditDialog(this.note, this.updateNoteName, this.deleteNoteName);
+
+  @override
+  _EditDialogState createState() => _EditDialogState();
+}
+
+class _EditDialogState extends State<_EditDialog> {
+  TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.note['title']);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      // title: Text('편집'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            
+            children: [
+              TextField(
+                controller: _controller,
+                decoration: InputDecoration(hintText: widget.note['title']),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // Edit action here
+                  print("Edit clicked");
+                  widget.updateNoteName(widget.note['id'], _controller.text);  
+                  Navigator.of(context).pop();
+                },
+                child: Text('수정'),
+              ),
+              SizedBox(height: 10),  // Add some space between the buttons
+              ElevatedButton(
+                onPressed: () {
+                  // Delete action here
+                  print("Delete clicked");
+                  widget.deleteNoteName(widget.note['id']);  
+                  Navigator.of(context).pop();
+                },
+                child: Text('삭제'),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
