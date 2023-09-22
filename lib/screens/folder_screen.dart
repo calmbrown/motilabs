@@ -30,133 +30,134 @@ class _FolderScreenState extends State<FolderScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        toolbarHeight: 40,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        title: Container(
-          color: Colors.white,
-          child: Text(
-            '폴더',
-            style: TextStyle(color: Colors.black, fontSize: 15),
-          ),
-        ),
-        actions: [
-          Row(
-            children: [
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    isEditMode = !isEditMode; // 편집 모드를 토글
-                  });
-                },
-                child: Text("편집",
-                    style: TextStyle(color: Colors.black, fontSize: 15)),
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            toolbarHeight: 40,
+            centerTitle: true,
+            backgroundColor: Colors.white,
+            title: Container(
+              color: Colors.white,
+              child: Text(
+                '폴더',
+                style: TextStyle(color: Colors.black, fontSize: 15),
+              ),
+            ),
+            actions: [
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isEditMode = !isEditMode; // 편집 모드를 토글
+                      });
+                    },
+                    child: Text("편집",
+                        style: TextStyle(color: Colors.black, fontSize: 15)),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-      body: FutureBuilder<List<dynamic>>(
-        future: folders,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // 로딩 중 표시
-          }
-
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}'); // 에러 처리
-          }
-
-          return FolderItemWiget(
-            mainList: snapshot.data!,
-            onDelete: (index) async {
-              // setState(() {
-              //   deleteFolder(snapshot.data![index]['id']);
-              // });
-              final newFolderName = await showDialog<String>(
-                context: context,
-                builder: (BuildContext context) {
-                  return _EditDialog(
-                    snapshot.data![index],
-                    updateFolderName,
-                    deleteFolderName,
-                  );
-                },
-              );
-
-              if (newFolderName != null && newFolderName.isNotEmpty) {
-                setState(() {
-                  deleteFolder(snapshot.data![index]['id']);
-                });
+          body: FutureBuilder<List<dynamic>>(
+            future: folders,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator(); // 로딩 중 표시
               }
-            },
-            isEditMode: isEditMode,
-          );
-        },
-      ),
-      bottomNavigationBar: Container(
-        height: 70,
-        padding: EdgeInsets.all(10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-                onPressed: () async {
+
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}'); // 에러 처리
+              }
+
+              return FolderItemWiget(
+                mainList: snapshot.data!,
+                onDelete: (index) async {
+                  // setState(() {
+                  //   deleteFolder(snapshot.data![index]['id']);
+                  // });
                   final newFolderName = await showDialog<String>(
                     context: context,
                     builder: (BuildContext context) {
-                      return _NewFolderDialog();
+                      return _EditDialog(
+                        snapshot.data![index],
+                        updateFolderName,
+                        deleteFolderName,
+                      );
                     },
                   );
 
                   if (newFolderName != null && newFolderName.isNotEmpty) {
                     setState(() {
-                      createFolder(newFolderName);
+                      deleteFolder(snapshot.data![index]['id']);
                     });
                   }
                 },
-                icon: Icon(Icons.create_new_folder)),
-            IconButton(
-                onPressed: () async {
-                  final result = await showDialog<Map<String, dynamic>>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return _NewNoteDialog();
-                    },
-                  );
+                isEditMode: isEditMode,
+              );
+            },
+          ),
+          bottomNavigationBar: Container(
+            height: 70,
+            padding: EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                    onPressed: () async {
+                      final newFolderName = await showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return _NewFolderDialog();
+                        },
+                      );
 
-                  if (result != null &&
-                      result['noteName'].isNotEmpty &&
-                      result['folderId'] != null) {
-                    try {
-                      int createdMemoId = await createMemo(
-                          result['folderId'], result['noteName']);
-                      setState(() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                MemoScreen(memo_id: createdMemoId),
-                          ),
-                        );
-                      });
-                    } catch (e) {
-                      // 예외 처리
-                      print('Error creating memo: $e');
-                    }
-                  }
-                },
-                icon: Icon(
-                  Icons.edit,
-                  color: Colors.black,
-                ))
-          ],
-        ),
-      ),
-    ));
+                      if (newFolderName != null && newFolderName.isNotEmpty) {
+                        setState(() {
+                          createFolder(newFolderName);
+                        });
+                      }
+                    },
+                    icon: Icon(Icons.create_new_folder)),
+                IconButton(
+                    onPressed: () async {
+                      final result = await showDialog<Map<String, dynamic>>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return _NewNoteDialog();
+                        },
+                      );
+
+                      if (result != null &&
+                          result['noteName'].isNotEmpty &&
+                          result['folderId'] != null) {
+                        try {
+                          int createdMemoId = await createMemo(
+                              result['folderId'], result['noteName']);
+                          setState(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MemoScreen(memo_id: createdMemoId),
+                              ),
+                            );
+                          });
+                        } catch (e) {
+                          // 예외 처리
+                          print('Error creating memo: $e');
+                        }
+                      }
+                    },
+                    icon: Icon(
+                      Icons.edit,
+                      color: Colors.black,
+                    ))
+              ],
+            ),
+          ),
+        ));
   }
 }
 
